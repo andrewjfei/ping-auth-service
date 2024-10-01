@@ -1,0 +1,41 @@
+services:
+    postgresql:
+        image: postgres:16-alpine
+        container_name: postgresql
+        restart: always
+        environment:
+            # uses environment variable defined in .env
+            POSTGRES_USER: ${POSTGRESQL_USER}
+            POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+            POSTGRES_DB: ${POSTGRESQL_DB}
+
+        # map storage volume on local machine to container
+        # directory (ensures data persists even if container is removed)
+        volumes:
+            - ping-postgresql-data:/var/lib/postgresql/data
+
+        # map local machine port to container port
+        ports:
+            - "5432:5432"
+
+    auth-service:
+        build: .
+        container_name: auth-serivce
+        image: ping-auth-service:latest
+        restart: always
+        environment:
+            APP_NAME: ${APP_NAME}
+            HOSTNAME: ${HOSTNAME}
+            PORT: ${PORT}
+            POSTGRESQL_URL: postgresql://${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}@postgresql:5432/${POSTGRESQL_DB}?schema=public
+            JWT_SECRET: ${JWT_SECRET}
+        volumes:
+            - .:/ping-auth-service
+        ports:
+            - "3000:3000"
+        depends_on:
+            - postgresql
+
+# define named volumes available to services
+volumes:
+    ping-postgresql-data:
