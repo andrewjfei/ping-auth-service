@@ -13,7 +13,7 @@ async function authenticateUser(
 
     // validate credentials
     if (user === null || password !== user.password) {
-        throw new InvalidCredentialsError();
+        throw new InvalidCredentialsError("invalid auth credentials");
     }
 
     return JwtUtil.generate(user);

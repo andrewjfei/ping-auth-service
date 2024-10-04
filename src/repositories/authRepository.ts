@@ -1,9 +1,9 @@
-import { PrismaClient, User } from "@prisma/client";
+import { User } from "@prisma/client";
+import { DatabaseConfig } from "../config";
 
 async function retrieveUserByUsername(username: string): Promise<User | null> {
-    const prisma = new PrismaClient();
 
-    const user: User | null = await prisma.user.findUnique({
+    const user: User | null = await DatabaseConfig.instance().client.user.findUnique({
         where: { username }
     });
 

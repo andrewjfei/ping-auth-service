@@ -25,9 +25,9 @@ services:
         restart: always
         environment:
             APP_NAME: ${APP_NAME}
-            HOSTNAME: ${HOSTNAME}
+            NODE_ENV: ${NODE_ENV}
             PORT: ${PORT}
-            POSTGRESQL_URL: postgresql://${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}@postgresql:5432/${POSTGRESQL_DB}?schema=public
+            POSTGRESQL_URL: postgres://${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}@postgresql:5432/${POSTGRESQL_DB}?schema=public
             JWT_SECRET: ${JWT_SECRET}
         volumes:
             - .:/ping-auth-service

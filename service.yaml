@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: ping-auth-service
+spec:
+    type: NodePort
+    selector:
+        type: service
+        app: ping-auth-service
+        env: production
+    ports:
+        - port: 3000
+          targetPort: 3000
+          nodePort: 30000

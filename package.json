@@ -4,13 +4,13 @@
     "description": "A client facing authentication service.",
     "main": "src/index.ts",
     "scripts": {
-        "dev": "dotenv -e .env.development -- nodemon src/index.ts",
-        "docker:up": "docker compose --env-file .env.development -p ping-auth-service up --build -d",
+        "start": "nodemon src/index.ts",
+        "docker:up": "docker compose --env-file .env -p ping-auth-service up --build -d",
         "docker:down": "docker compose -p ping-auth-service down",
-        "prisma:db:seed": "dotenv -e .env.development -- npx prisma db seed",
-        "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
-        "test": "dotenv -e .env.development -- jest --coverage",
-        "test:integration": "dotenv -e .env.development -- jest --testPathPattern=integration --coverage"
+        "prisma:db:seed": "npx prisma db seed",
+        "prisma:migrate:dev": "npx prisma migrate dev",
+        "test": "jest --coverage",
+        "test:integration": "jest --testPathPattern=integration"
     },
     "author": "andrewjfei",
     "license": "ISC",
@@ -21,7 +21,8 @@
         "@prisma/client": "^5.20.0",
         "dotenv-cli": "^7.4.2",
         "express": "^4.21.0",
-        "jsonwebtoken": "^9.0.2"
+        "jsonwebtoken": "^9.0.2",
+        "winston": "^3.14.2"
     },
     "devDependencies": {
         "@testcontainers/postgresql": "^10.13.1",

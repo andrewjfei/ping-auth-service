@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "darwin-arm64", "linux-musl-arm64-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["darwin-arm64", "debian-openssl-3.0.x", "windows", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -9,11 +9,12 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
-  username      String          @unique
-  email         String          @unique
-  password      String
-  created       DateTime        @default(now())
-  lastUpdated   DateTime        @updatedAt
+  id          String   @id @default(uuid())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  created     DateTime @default(now())
+  lastUpdated DateTime @updatedAt
+
   @@map("user")
 }

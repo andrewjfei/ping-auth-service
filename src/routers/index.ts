@@ -4,7 +4,7 @@ import v1Router from "./v1";
 const router: Router = express.Router();
 
 router.use("/status", (_req, res) => {
-    res.json({ status: "online" });
+    res.json({ status: "ONLINE" });
 });
 
 router.use("/v1", v1Router);

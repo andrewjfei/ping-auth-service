@@ -10,28 +10,34 @@ import RepsonseStatus from "../../src/enums/ResponseStatus";
 import { ErrorCode } from "../../src/enums";
 import { Server } from "http";
 import { AuthRequest } from "../../src/interfaces";
+import { DatabaseConfig } from "../../src/config";
 
 describe("auth routes", () => {
     jest.setTimeout(6000);
 
     const url: string = `http://${process.env.HOSTNAME}:${process.env.PORT}/api/v1/auth`;
 
-    let postgresqlContainer: StartedPostgreSqlContainer | null = null;
-    let prismaClient: PrismaClient | null = null;
-    let pingAuthService: Server | null = null;
+    let postgresqlContainer: StartedPostgreSqlContainer;
+    let databaseConfig: DatabaseConfig;
+    let prismaClient: PrismaClient;
+    let pingAuthService: Server;
 
     beforeAll(async () => {
         // start postgres test container
-        postgresqlContainer = await new PostgreSqlContainer("postgres:16-alpine")
+        postgresqlContainer = await new PostgreSqlContainer(
+            "postgres:16-alpine"
+        )
             .withUsername("test")
             .withPassword("password")
             .withDatabase("ping")
             .start();
 
-        // set environment variable database connection string which is used by prisma client
-        process.env.POSTGRESQL_URL = postgresqlContainer.getConnectionUri();
+        // set database url in config for prisma connections
+        databaseConfig = DatabaseConfig.instance();
+        databaseConfig.dbUrl = postgresqlContainer.getConnectionUri();
 
-        prismaClient = new PrismaClient();
+        // get prisma client
+        prismaClient = databaseConfig.client;
 
         // create tables manually (since we cant use prisma migration script from within code)
         await createTables(prismaClient);
@@ -74,7 +80,10 @@ describe("auth routes", () => {
 
     test("invalid credentials should return error code 200", async () => {
         try {
-            const body: AuthRequest = { username: "jimmychan", password: "incorrect" };
+            const body: AuthRequest = {
+                username: "jimmychan",
+                password: "incorrect"
+            };
 
             await axios.post(url, body);
 
@@ -94,7 +103,10 @@ describe("auth routes", () => {
 
     test("valid credentials should return jwt", async () => {
         try {
-            const body: AuthRequest = { username: "jimmychan", password: "password" };
+            const body: AuthRequest = {
+                username: "jimmychan",
+                password: "password"
+            };
 
             const res: AxiosResponse = await axios.post(url, body);
 

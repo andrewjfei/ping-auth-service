@@ -6,10 +6,10 @@ class InvalidRequestBodyError implements PingAuthServiceError {
     code: ErrorCode;
     message: string;
 
-    constructor() {
+    constructor(message: string = "invalid request body") {
         this.status = 400;
         this.code = ErrorCode.InvalidRequestBody;
-        this.message = "invalid request body";
+        this.message = message;
     }
 }
 

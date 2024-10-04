@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: ping-auth-service
+    labels:
+        type: service
+        app: ping-auth-service
+        env: production
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            type: service
+            app: ping-auth-service
+            env: production
+    template:
+        metadata:
+            labels:
+                type: service
+                app: ping-auth-service
+                env: production
+        spec:
+            containers:
+                - name: ping-auth-service
+                  image: andrewjfei/ping-auth-service:latest
+                  imagePullPolicy: Always
+                  ports:
+                      - containerPort: 3000
+                  env:
+                      - name: APP_NAME
+                        value: "ping-auth-service"
+                      - name: NODE_ENV
+                        value: "production"
+                      - name: PORT
+                        value: "3000"
+                      - name: POSTGRESQL_URL
+                        value: "postgresql://admin:password@ping-postgresql:5432/ping?schema=public"
+                      - name: JWT_SECRET
+                        value: "secret"

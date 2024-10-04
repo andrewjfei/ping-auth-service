@@ -6,10 +6,10 @@ class InvalidCredentialsError implements PingAuthServiceError {
     code: ErrorCode;
     message: string;
 
-    constructor() {
+    constructor(message: string = "invalid credentials") {
         this.status = 401;
         this.code = ErrorCode.InvalidCredentials;
-        this.message = "invalid credentials";
+        this.message = message;
     }
 }
 
