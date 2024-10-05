@@ -1,13 +1,30 @@
 import { User } from "@prisma/client";
-import { DatabaseConfig } from "../config";
 
-async function retrieveUserByUsername(username: string): Promise<User | null> {
+import Database from "../Database";
 
-    const user: User | null = await DatabaseConfig.instance().client.user.findUnique({
-        where: { username }
-    });
+class AuthRepository {
+    private static _instance: AuthRepository;
+    private _database: Database;
 
-    return user;
+    private constructor() {
+        this._database = Database.instance();
+    }
+
+    static instance(): AuthRepository {
+        if (!this._instance) {
+            this._instance = new AuthRepository();
+        }
+
+        return this._instance;
+    }
+
+    async retrieveUserByUsername(username: string): Promise<User | null> {
+        const user: User | null = await this._database.client.user.findUnique({
+            where: { username }
+        });
+
+        return user;
+    }
 }
 
-export { retrieveUserByUsername };
+export default AuthRepository;

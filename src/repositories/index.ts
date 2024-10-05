@@ -1,1 +1,1 @@
-export * as AuthRepository from "./authRepository";
+export { default as AuthRepository } from "./AuthRepository";

@@ -5,12 +5,13 @@ import {
 } from "@testcontainers/postgresql";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
-import app from "../../src/index";
 import RepsonseStatus from "../../src/enums/ResponseStatus";
 import { ErrorCode } from "../../src/enums";
-import { Server } from "http";
 import { AuthRequest } from "../../src/interfaces";
 import { DatabaseConfig } from "../../src/config";
+import { Server } from "http";
+import App from "../../src/App";
+import Database from "../../src/Database";
 
 describe("auth routes", () => {
     jest.setTimeout(6000);
@@ -18,7 +19,6 @@ describe("auth routes", () => {
     const url: string = `http://${process.env.HOSTNAME}:${process.env.PORT}/api/v1/auth`;
 
     let postgresqlContainer: StartedPostgreSqlContainer;
-    let databaseConfig: DatabaseConfig;
     let prismaClient: PrismaClient;
     let pingAuthService: Server;
 
@@ -33,11 +33,11 @@ describe("auth routes", () => {
             .start();
 
         // set database url in config for prisma connections
-        databaseConfig = DatabaseConfig.instance();
-        databaseConfig.dbUrl = postgresqlContainer.getConnectionUri();
+        const databaseConfig = new DatabaseConfig(postgresqlContainer.getConnectionUri());
+        Database.instance().config = databaseConfig;
 
         // get prisma client
-        prismaClient = databaseConfig.client;
+        prismaClient = Database.instance().client;
 
         // create tables manually (since we cant use prisma migration script from within code)
         await createTables(prismaClient);
@@ -49,7 +49,7 @@ describe("auth routes", () => {
         );
 
         // start ping auth service
-        pingAuthService = app.listen(process.env.PORT);
+        pingAuthService = App.instance().start();
     });
 
     afterAll(async () => {

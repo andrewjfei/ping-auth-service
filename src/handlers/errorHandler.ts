@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { Logger as WinstonLogger } from "winston";
+
 import { PingAuthServiceError, ErrorResponse } from "../interfaces";
 import { ErrorCode, ResponseStatus } from "../enums";
-import { logger } from "../config";
+import Logger from "../Logger";
 
 function errorHandler(
     err: PingAuthServiceError,
@@ -9,6 +11,8 @@ function errorHandler(
     res: Response<ErrorResponse>,
     _next: NextFunction
 ) {
+    const logger: WinstonLogger = Logger.instance().logger;
+
     logger.error(err.message);
 
     res.status(err.status).json({

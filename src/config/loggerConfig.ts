@@ -1,18 +1,28 @@
-import winston, { Logger } from "winston";
+import winston, { Logform, format as fmt, transport } from "winston";
 
-const { combine, timestamp, printf, colorize, align } = winston.format;
+class LoggerConfig {
+    level: string;
+    format: Logform.Format;
+    transports: transport[];
 
-const logger: Logger = winston.createLogger({
-    level: "info",
-    format: combine(
-        colorize({ all: true }),
-        timestamp({
-            format: "DD-MM-YYYY HH:mm:ss"
-        }),
-        align(),
-        printf((log) => `${log.timestamp} [${log.level}] ${log.message}`)
-    ),
-    transports: [new winston.transports.Console()]
-});
+    constructor(
+        level: string = "info",
+        format: Logform.Format = fmt.combine(
+            fmt.colorize({ all: true }),
+            fmt.timestamp({
+                format: "DD-MM-YYYY HH:mm:ss"
+            }),
+            fmt.align(),
+            fmt.printf(
+                (log) => `${log.timestamp} [${log.level}] ${log.message}`
+            )
+        ),
+        transports: transport[] = [new winston.transports.Console()]
+    ) {
+        this.level = level;
+        this.format = format;
+        this.transports = transports;
+    }
+}
 
-export default logger;
+export default LoggerConfig;
